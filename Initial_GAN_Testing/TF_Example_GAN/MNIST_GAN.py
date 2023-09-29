@@ -13,6 +13,7 @@ import time
 (train_images, train_labels), (_, _) = tf.keras.datasets.mnist.load_data()
 
 train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('float32')
+train_images  = np.array([ x for (x, y) in zip(train_images, train_labels) if y == 5 ])
 train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
 
 BUFFER_SIZE = 60000
@@ -81,7 +82,7 @@ def generator_loss(fake_output):
 generator_optimizer = tf.keras.optimizers.Adam(1e-4)
 discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-EPOCHS = 50
+EPOCHS = 250
 noise_dim = 100
 num_examples_to_generate = 16
 
@@ -115,12 +116,13 @@ def train(dataset, epochs):
     for image_batch in dataset:
       train_step(image_batch)
 
-    # Produce images for the GIF as you go
-    generate_and_save_images(generator,
-                             epoch + 1,
-                             seed)
+    if(epoch % 25 == 0):
+        # Produce images for the GIF as you go
+        generate_and_save_images(generator,
+                                epoch + 1,
+                                seed)
 
-    print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
+        print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
 
   # Generate after the final epoch
   generate_and_save_images(generator,
