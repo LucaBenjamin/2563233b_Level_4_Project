@@ -7,10 +7,7 @@ import numpy as np
 
 import tensorflow as tf
 
-import sounddevice as sd
-
 from scipy.io import wavfile
-
 def get_spectrogram(waveform):
   # Convert the waveform to a spectrogram via a STFT.
   spectrogram = tf.signal.stft(
@@ -54,18 +51,15 @@ def spectrogram_to_waveform(spectrogram):
 
     return waveform
 
-def play_audio(waveform, sample_rate=44100):
-    # Ensure waveform is a NumPy array.
-    waveform = np.array(waveform)
-    
-    # Play the waveform.
-    sd.play(waveform, samplerate=sample_rate)
 
-    # Use this line if you want the script to block execution until audio is done playing.
-    sd.wait()
+def save_waveform_to_wav(waveform, filename, sample_rate=44100):
+    # Ensure waveform is a NumPy array and scale to int16.
+    waveform = (waveform * 32767 / max(0.01, np.max(np.abs(waveform)))).astype(np.int16)
 
+    # Save to WAV file.
+    wavfile.write(filename, sample_rate, waveform)
 
-audio_path = str(pathlib.Path().absolute()) + "/Basic_Audio_Processing/wav_tunes/"
+audio_path = str(pathlib.Path().absolute()) + "/Basic_Audio_Processing/sample_wav_tunes/"
 
 audio_files = os.listdir(audio_path)
 
@@ -84,9 +78,6 @@ axes[0].set_xlim([0, 1000000])
 plot_spectrogram(spectrogram, axes[1])
 axes[1].set_title('Spectrogram')
 plt.show()
-def normalize_waveform(waveform):
-    return waveform / tf.reduce_max(tf.abs(waveform))
 
-waveform = spectrogram_to_waveform(spectrogram)
-normalized_waveform = normalize_waveform(waveform)
-play_audio(normalized_waveform.numpy())
+waveform_from_spec = np.array(spectrogram_to_waveform(spectrogram).numpy())
+save_waveform_to_wav(waveform_from_spec, "fullyTransformed.wav")
