@@ -80,5 +80,5 @@ youtube_files_dir = "Audio_Processing/youtube_tunes"
 for filename in os.listdir(youtube_files_dir):
     file_path = os.path.join(youtube_files_dir, filename)
     if os.path.isfile(file_path):
-        process_wav(file_path, "Audio_Processing/processed_clips/" + os.path.basename(file_path))
+        process_wav(file_path, "Audio_Processing/youtube_tunes/processed_clips/" + os.path.basename(file_path))
 
