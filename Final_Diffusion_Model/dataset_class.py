@@ -1,28 +1,22 @@
-import os
-import torch
+from PIL import Image
 from torch.utils.data import Dataset
-import torchaudio
+import os
 
-class AudioDataset(Dataset):
-    def __init__(self, audio_dir, transform=None):
-        self.audio_dir = audio_dir
-        self.audio_files = [f for f in os.listdir(audio_dir) if f.endswith('.wav')]
+class SpectrogramDataset(Dataset):
+    def __init__(self, image_dir, transform=None):
+        self.image_dir = image_dir
+        self.image_files = [f for f in os.listdir(image_dir) if f.endswith('.png')]
         self.transform = transform
 
     def __len__(self):
-        return len(self.audio_files)
+        return len(self.image_files)
 
     def __getitem__(self, idx):
-        audio_path = os.path.join(self.audio_dir, self.audio_files[idx])
-        waveform, sample_rate = torchaudio.load(audio_path)
+        image_path = os.path.join(self.image_dir, self.image_files[idx])
+        # Open the image in RGB mode
+        image = Image.open(image_path).convert('RGB')
 
-        return waveform, sample_rate
+        if self.transform:
+            image = self.transform(image)
 
-# Test usage
-audio_dir = "Audio_Processing\youtube_tunes\processed_clips"
-audio_dataset = AudioDataset(audio_dir=audio_dir)
-
-
-for i, (waveform, sample_rate) in enumerate(audio_dataset):
-    print(waveform.shape, i)
-    pass
+        return image
