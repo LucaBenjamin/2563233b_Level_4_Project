@@ -24,14 +24,14 @@ import glob
 @dataclass
 class TrainingConfig:
     image_size = 128  # the generated image resolution
-    train_batch_size = 16
-    eval_batch_size = 16  # how many images to sample during evaluation
+    train_batch_size = 24
+    eval_batch_size = 24  # how many images to sample during evaluation
     num_epochs = 50
     gradient_accumulation_steps = 1
     learning_rate = 1e-4
     lr_warmup_steps = 500
-    save_image_epochs = 5
-    save_model_epochs = 15
+    save_image_epochs = 1
+    save_model_epochs = 1
     seed = 0
     mixed_precision = "fp16"
     output_dir = "Final_Diffusion_Model//test_out"
