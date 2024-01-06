@@ -1,22 +1,25 @@
-from PIL import Image
-from torch.utils.data import Dataset
 import os
+import numpy as np
+from torch.utils.data import Dataset
+import torch
 
-class SpectrogramDataset(Dataset):
-    def __init__(self, image_dir, transform=None):
-        self.image_dir = image_dir
-        self.image_files = [f for f in os.listdir(image_dir) if f.endswith('.png')]
-        self.transform = transform
+class NumpyDataset(Dataset):
+    def __init__(self, npy_dir):
+        self.npy_dir = npy_dir
+        self.npy_files = [f for f in os.listdir(npy_dir) if f.endswith('.npy')]
 
     def __len__(self):
-        return len(self.image_files)
+        return len(self.npy_files)
 
     def __getitem__(self, idx):
-        image_path = os.path.join(self.image_dir, self.image_files[idx])
-        # Open the image in RGB mode
-        image = Image.open(image_path).convert('RGB')
+        npy_path = os.path.join(self.npy_dir, self.npy_files[idx])
+        # Load the numpy array
+        npy_data = np.load(npy_path)
 
-        if self.transform:
-            image = self.transform(image)
+        # Ensure that the numpy array is in the shape (4, 64, 64)
+        npy_data = np.reshape(npy_data, (4, 64, 64))
 
-        return image
+        # Convert numpy array to torch tensor
+        tensor_data = torch.from_numpy(npy_data).float()  # Convert to float tensor
+
+        return tensor_data

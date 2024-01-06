@@ -34,6 +34,20 @@ class AudioSpectrogramConverter:
         # Save the spectrogram image
         spectrogram_image.save(file_name)
 
+    def load_spectrogram_image(self, file_name):
+        # Load the spectrogram image from a file
+        image = Image.open(file_name)
+
+        # Ensure the image is in the correct mode (e.g., 'L' for grayscale)
+        if image.mode != 'L':
+            image = image.convert('L')
+
+        # Resize the image to the expected dimensions if necessary
+        if image.size != (self.x_res, self.y_res):
+            image = image.resize((self.x_res, self.y_res))
+
+        return image
+
     def spectrogram_to_audio(self, spectrogram_image):
         # Convert the spectrogram back to audio
         return self.mel.image_to_audio(spectrogram_image)

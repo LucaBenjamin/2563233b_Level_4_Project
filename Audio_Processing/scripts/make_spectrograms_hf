@@ -1,8 +1,0 @@
-from HugginFaceMelSpect import AudioSpectrogramConverter
-# Example usage
-converter = AudioSpectrogramConverter(x_res=256, y_res=256)
-converter.load_audio("sample.wav")
-spectrogram = converter.audio_to_spectrogram()
-converter.save_spectrogram(spectrogram, "spectrogram.png")
-reconstructed_audio = converter.spectrogram_to_audio(spectrogram)
-converter.save_audio(reconstructed_audio, "reconstructed_audio_test.wav")

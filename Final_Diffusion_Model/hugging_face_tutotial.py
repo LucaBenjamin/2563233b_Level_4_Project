@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import torchvision.transforms as transforms
-from dataset_class import SpectrogramDataset
+from dataset_class import NumpyDataset
 import pylab as plt
 import torchvision.transforms.functional as F
 import torch
@@ -23,7 +23,7 @@ import glob
 
 @dataclass
 class TrainingConfig:
-    image_size = 128  # the generated image resolution
+    image_size = 64  # the generated image resolution
     train_batch_size = 24
     eval_batch_size = 24  # how many images to sample during evaluation
     num_epochs = 50
@@ -41,7 +41,7 @@ config = TrainingConfig()
 
 
 # Specify the directory containing the spectrogram images
-image_dir = "Audio_Processing//spectograms"
+image_dir = "Audio_Processing//latents"
 
 # Define transformations, if needed
 transform = transforms.Compose([
@@ -50,7 +50,7 @@ transform = transforms.Compose([
 ])
 
 # Create an instance of SpectrogramDataset
-dataset = SpectrogramDataset(image_dir=image_dir, transform=transform)
+dataset = NumpyDataset(npy_dir=image_dir)
 
 
 train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_batch_size, shuffle=True)
@@ -58,8 +58,8 @@ train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_
 # UNET MODEL
 model = UNet2DModel(
     sample_size=config.image_size,  # the target image resolution
-    in_channels=3,  # the number of input channels, 3 for RGB images
-    out_channels=3,  # the number of output channels
+    in_channels=4,  # the number of input channels, 3 for RGB images
+    out_channels=4,  # the number of output channels
     layers_per_block=2,  # how many ResNet layers to use per UNet block
     block_out_channels=(128, 128, 256, 256, 512, 512),  # the number of output channels for each UNet block
     down_block_types=(
