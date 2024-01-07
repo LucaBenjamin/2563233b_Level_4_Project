@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import torchvision.transforms as transforms
 from dataset_class import NumpyDataset
 import pylab as plt
-import torchvision.transforms.functional as F
+import torchvision.transforms.functional as TF
 import torch
 from diffusers import UNet2DModel
 from PIL import Image
@@ -19,19 +19,20 @@ from tqdm.auto import tqdm
 from pathlib import Path 
 import glob
 
+from HFAutoencoder import ImageAutoencoder
 
 
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 24
-    eval_batch_size = 24  # how many images to sample during evaluation
+    train_batch_size = 16
+    eval_batch_size = 16  # how many images to sample during evaluation
     num_epochs = 50
     gradient_accumulation_steps = 1
     learning_rate = 1e-4
     lr_warmup_steps = 500
     save_image_epochs = 1
-    save_model_epochs = 1
+    save_model_epochs = 10
     seed = 0
     mixed_precision = "fp16"
     output_dir = "Final_Diffusion_Model//test_out"
@@ -40,7 +41,7 @@ class TrainingConfig:
 config = TrainingConfig()
 
 
-# Specify the directory containing the spectrogram images
+# Specify the directory containing the latent space spectrogram
 image_dir = "Audio_Processing//latents"
 
 # Define transformations, if needed
@@ -54,6 +55,9 @@ dataset = NumpyDataset(npy_dir=image_dir)
 
 
 train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_batch_size, shuffle=True)
+
+# instantiate autoencoder
+autoencoder = ImageAutoencoder()
 
 # UNET MODEL
 model = UNet2DModel(
@@ -122,14 +126,17 @@ def evaluate(config, epoch, pipeline):
         batch_size=config.eval_batch_size,
         generator=torch.manual_seed(config.seed),
     ).images
-
-    # Make a grid out of the images
-    image_grid = make_image_grid(images, rows=4, cols=4)
-
-    # Save the images
-    test_dir = os.path.join(config.output_dir, "samples")
-    os.makedirs(test_dir, exist_ok=True)
-    image_grid.save(f"{test_dir}/{epoch:04d}.png")
+ 
+    decoded_images = []
+    for i, img in enumerate(images):
+        # Convert PIL image to tensor
+        img_tensor = transforms.ToTensor()(img).unsqueeze(0).to(device)
+        print("\n\n", img_tensor.shape)
+        print("\n\n", img_tensor)
+        decoded_tensor = autoencoder.decode(img_tensor)
+        
+        
+        autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
 
 
 # # TESTING

@@ -1,7 +1,8 @@
 import os
 from HugginFaceMelSpect import AudioSpectrogramConverter
 # Example usage
-
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 
 def convert_directory_to_spectrograms(input_directory, output_directory):
@@ -20,6 +21,6 @@ def convert_directory_to_spectrograms(input_directory, output_directory):
         spectrogram = converter.audio_to_spectrogram()
         converter.save_spectrogram(spectrogram, output_path)
 # Example usage
-input_dir = 'Audio_Processing//processed_clips'
+input_dir = 'Audio_Processing//youtube_tunes//processed_clips'
 output_dir = 'Audio_Processing//spectograms'
 convert_directory_to_spectrograms(input_dir, output_dir)
