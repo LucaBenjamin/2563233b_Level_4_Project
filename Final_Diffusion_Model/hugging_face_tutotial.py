@@ -19,19 +19,20 @@ from tqdm.auto import tqdm
 from pathlib import Path 
 import glob
 
+from normalise_latents import ArrayNormalizer
 from HFAutoencoder import ImageAutoencoder
 
 
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 16
-    eval_batch_size = 16  # how many images to sample during evaluation
-    num_epochs = 50
+    train_batch_size = 32
+    eval_batch_size = 8  # how many images to sample during evaluation
+    num_epochs = 100
     gradient_accumulation_steps = 1
-    learning_rate = 1e-4
+    learning_rate = 1e-5
     lr_warmup_steps = 500
-    save_image_epochs = 1
+    save_image_epochs = 15
     save_model_epochs = 10
     seed = 0
     mixed_precision = "fp16"
@@ -58,6 +59,9 @@ train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_
 
 # instantiate autoencoder
 autoencoder = ImageAutoencoder()
+
+# instantiate denormaliser
+denormaliser = ArrayNormalizer("", min = -95.43647003173828, max = 89.94168853759766)
 
 # UNET MODEL
 model = UNet2DModel(
@@ -133,7 +137,10 @@ def evaluate(config, epoch, pipeline):
         img_tensor = transforms.ToTensor()(img).unsqueeze(0).to(device)
         print("\n\n", img_tensor.shape)
         print("\n\n", img_tensor)
-        decoded_tensor = autoencoder.decode(img_tensor)
+        denormalised_numpy = denormaliser.denormalize_array(img_tensor.cpu().numpy())
+        print("\n\n", denormalised_numpy)
+        denormalised_tensor = torch.from_numpy(denormalised_numpy).to(device)
+        decoded_tensor = autoencoder.decode(denormalised_tensor)
         
         
         autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
