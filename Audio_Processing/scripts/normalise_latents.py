@@ -2,10 +2,8 @@ import numpy as np
 import os
 
 class ArrayNormalizer:
-    def __init__(self, directory, min = None, max = None):
+    def __init__(self, directory):
         self.directory = directory
-        self.global_min = min
-        self.global_max = max
 
     def read_np_arrays(self):
         arrays = []
@@ -17,20 +15,15 @@ class ArrayNormalizer:
                 filenames.append(filepath)
         return arrays, filenames
 
-    def find_global_min_max(self, arrays):
-        self.global_min = min(array.min() for array in arrays)
-        self.global_max = max(array.max() for array in arrays)
-
     def normalize_arrays(self, arrays):
         normalized_arrays = []
         for array in arrays:
-            normalized = (array - self.global_min) / (self.global_max - self.global_min)
+            normalized = array * 0.18215
             normalized_arrays.append(normalized)
         return normalized_arrays
 
     def process_and_save(self):
         arrays, filenames = self.read_np_arrays()
-        self.find_global_min_max(arrays)
         normalized_arrays = self.normalize_arrays(arrays)
 
         # Overwrite each file with its normalized array
@@ -38,15 +31,13 @@ class ArrayNormalizer:
             np.save(filepath, normalized_array)
     
     def denormalize_array(self, normalized_array):
-        original_data = normalized_array * (self.global_max - self.global_min) + self.global_min
+        original_data = normalized_array * (1 / 0.18215)
         return original_data
 
 # # Usage
 # directory = "Audio_Processing//latents"
 # normalizer = ArrayNormalizer(directory)
-# arrays, filenames = normalizer.read_np_arrays()
-# normalizer.find_global_min_max(arrays)
-# # normalizer.process_and_save()
+# normalizer.process_and_save()
 # print(f"Global Min: {normalizer.global_min}, Global Max: {normalizer.global_max}")
 
 

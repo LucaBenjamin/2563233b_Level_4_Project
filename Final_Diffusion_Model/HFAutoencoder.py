@@ -11,7 +11,6 @@ class ImageAutoencoder:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)  # Move the model to the appropriate device
 
-
     def load_image_as_tensor(self, file_path, image_size=256):
         # Load the image
         image = Image.open(file_path).convert('RGB')
@@ -32,18 +31,18 @@ class ImageAutoencoder:
     def encode(self, file_path, image_size = 256):
         # Load and transform the image
         image_tensor = self.load_image_as_tensor(file_path, image_size=image_size)
-
+        image_tensor = 2.0 * image_tensor - 1.0
         # Encode the image to latent space
         with torch.no_grad():
             encoded = self.model.tiled_encode(image_tensor, return_dict=True)
         return encoded.latent_dist
 
     def decode(self, latent_dist):
-        # Sample from the latent distribution to get the latent vector
+
         # Decode from latent space to pixel space
         with torch.no_grad():
             decoded = self.model.tiled_decode(latent_dist, return_dict=True)
-        return decoded.sample  # Access the decoded images
+        return (decoded.sample / 2.0 + 0.5).clamp(0, 1)  # Access the decoded images
 
     def save_image(self, tensor, file_path):
         # Clip the tensor values to ensure they are in the [0, 1] range

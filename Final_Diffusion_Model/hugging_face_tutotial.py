@@ -26,13 +26,13 @@ from HFAutoencoder import ImageAutoencoder
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 32
+    train_batch_size = 4
     eval_batch_size = 8  # how many images to sample during evaluation
     num_epochs = 100
     gradient_accumulation_steps = 1
-    learning_rate = 1e-5
+    learning_rate = 1e-4
     lr_warmup_steps = 500
-    save_image_epochs = 15
+    save_image_epochs = 5
     save_model_epochs = 10
     seed = 0
     mixed_precision = "fp16"
@@ -61,8 +61,7 @@ train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_
 autoencoder = ImageAutoencoder()
 
 # instantiate denormaliser
-denormaliser = ArrayNormalizer("", min = -95.43647003173828, max = 89.94168853759766)
-
+denormaliser = ArrayNormalizer("")
 # UNET MODEL
 model = UNet2DModel(
     sample_size=config.image_size,  # the target image resolution
@@ -131,7 +130,6 @@ def evaluate(config, epoch, pipeline):
         generator=torch.manual_seed(config.seed),
     ).images
  
-    decoded_images = []
     for i, img in enumerate(images):
         # Convert PIL image to tensor
         img_tensor = transforms.ToTensor()(img).unsqueeze(0).to(device)
