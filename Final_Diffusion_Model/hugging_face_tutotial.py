@@ -21,19 +21,20 @@ import glob
 
 from normalise_latents import ArrayNormalizer
 from HFAutoencoder import ImageAutoencoder
+from modified_pipeline import TestPipeline
 
 
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 4
+    train_batch_size = 8
     eval_batch_size = 8  # how many images to sample during evaluation
-    num_epochs = 100
+    num_epochs = 100000
     gradient_accumulation_steps = 1
-    learning_rate = 1e-4
+    learning_rate = 1.5e-4
     lr_warmup_steps = 500
-    save_image_epochs = 5
-    save_model_epochs = 10
+    save_image_epochs = 1000
+    save_model_epochs = 50000
     seed = 0
     mixed_precision = "fp16"
     output_dir = "Final_Diffusion_Model//test_out"
@@ -91,7 +92,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(torch.cuda.is_available())
 model.to(device)
 
-sample_image = dataset[10].unsqueeze(0).to(device)  # Move to the same device as the model
+sample_image = dataset[0].unsqueeze(0).to(device)  # Move to the same device as the model
 
 print("Input shape:", sample_image.shape)
 
@@ -228,7 +229,7 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
 
         # After each epoch you optionally sample some demo images with evaluate() and save the model
         if accelerator.is_main_process:
-            pipeline = DDPMPipeline(unet=accelerator.unwrap_model(model), scheduler=noise_scheduler)
+            pipeline = TestPipeline(unet=accelerator.unwrap_model(model), scheduler=noise_scheduler)
 
             if (epoch + 1) % config.save_image_epochs == 0 or epoch == config.num_epochs - 1:
                 evaluate(config, epoch, pipeline)
