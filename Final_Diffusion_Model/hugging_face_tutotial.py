@@ -142,7 +142,7 @@ def evaluate(config, epoch, pipeline):
         decoded_tensor = autoencoder.decode(denormalised)
         
         
-        autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
+        # autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
 
 
 def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_scheduler):
@@ -208,15 +208,15 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                 optimizer.zero_grad()
 
             # DENOISING VIS TEST
-            # test_out = noise_scheduler.step(noise_pred.cpu(), timesteps.cpu(), noisy_images.cpu()).pred_original_sample
-            # test_out = denormaliser.denormalize_array(test_out).to(device)
-            # noised = denormaliser.denormalize_array(noisy_images[0])
-            # noised = noised.unsqueeze(0)
-            # if global_step % 500 == 0:
-            #     noised = autoencoder.decode(noised)
-            #     decoded_tensor = autoencoder.decode(test_out)
-            #     autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_denoised_{global_step}.png")
-            #     autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_noisy_{global_step}.png")
+            test_out = noise_scheduler.step(noise_pred.cpu(), timesteps.cpu(), noisy_images.cpu()).pred_original_sample
+            test_out = denormaliser.denormalize_array(test_out).to(device)
+            noised = denormaliser.denormalize_array(noisy_images[0])
+            noised = noised.unsqueeze(0)
+            if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
+                noised = autoencoder.decode(noised)
+                decoded_tensor = autoencoder.decode(test_out)
+                autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_denoised_{global_step}.png")
+                autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_noisy_{global_step}.png")
 
             progress_bar.update(1)
             logs = {"loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0], "step": global_step}
