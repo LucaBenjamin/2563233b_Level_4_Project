@@ -8,8 +8,6 @@ class ImageAutoencoder:
     def __init__(self, model_url = "https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.safetensors"):
         # Initialize the AutoencoderKL model
         self.model = AutoencoderKL.from_single_file(model_url)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model.to(self.device)  # Move the model to the appropriate device
 
     def load_image_as_tensor(self, file_path, image_size=256):
         # Load the image

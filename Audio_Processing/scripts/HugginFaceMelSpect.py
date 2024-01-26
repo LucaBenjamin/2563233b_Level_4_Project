@@ -2,6 +2,8 @@ from diffusers import Mel
 from PIL import Image
 import soundfile as sf
 import numpy as np
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class AudioSpectrogramConverter:
     def __init__(self, x_res, y_res, sample_rate=16000, n_fft=2048, slice_length=5):

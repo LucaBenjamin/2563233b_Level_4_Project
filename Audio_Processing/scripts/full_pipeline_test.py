@@ -3,7 +3,7 @@ from HFAutoencoder import ImageAutoencoder
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-sample_audio_path = "Audio_Processing/youtube_tunes/processed_clips/classical_2.wav_segment_35.wav"
+sample_audio_path = "Audio_Processing\youtube_tunes\processed_clips\classical_1.wav_segment_0.wav"
 spect_output_path = "HFSpect.png"
 
 converter = AudioSpectrogramConverter(x_res=512, y_res=512)

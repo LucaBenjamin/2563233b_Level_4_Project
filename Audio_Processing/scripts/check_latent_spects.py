@@ -4,8 +4,6 @@ from normalise_latents import ArrayNormalizer
 from HFAutoencoder import ImageAutoencoder
 import torch
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 autoencoder = ImageAutoencoder()
 spect_num = 0
 np.set_printoptions(suppress=True,precision=3)
@@ -15,6 +13,6 @@ print(loaded.min(), loaded.max())
 # instantiate denormaliser
 denormaliser = ArrayNormalizer("")
 loaded = denormaliser.denormalize_array(loaded)
-decoded = autoencoder.decode(torch.from_numpy(loaded).to(device))
+decoded = autoencoder.decode(torch.from_numpy(loaded))
 autoencoder.save_image(decoded, "testing_decoded.jpg")
 # autoencoder.save_image(output_image, "random_test_spect.jpg")

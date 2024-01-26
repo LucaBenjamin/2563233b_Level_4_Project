@@ -27,13 +27,13 @@ from modified_pipeline import TestPipeline
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 8
+    train_batch_size = 1
     eval_batch_size = 8  # how many images to sample during evaluation
     num_epochs = 100000
     gradient_accumulation_steps = 1
-    learning_rate = 1.5e-4
+    learning_rate = 2e-4
     lr_warmup_steps = 500
-    save_image_epochs = 1000
+    save_image_epochs = 500
     save_model_epochs = 50000
     seed = 0
     mixed_precision = "fp16"
@@ -133,30 +133,16 @@ def evaluate(config, epoch, pipeline):
  
     for i, img in enumerate(images):
         # Convert PIL image to tensor
-        img_tensor = transforms.ToTensor()(img).unsqueeze(0).to(device)
+        print(img.shape)
+        img_tensor = img.unsqueeze(0).to(device)
         print("\n\n", img_tensor.shape)
         print("\n\n", img_tensor)
-        denormalised_numpy = denormaliser.denormalize_array(img_tensor.cpu().numpy())
-        print("\n\n", denormalised_numpy)
-        denormalised_tensor = torch.from_numpy(denormalised_numpy).to(device)
-        decoded_tensor = autoencoder.decode(denormalised_tensor)
+        denormalised= denormaliser.denormalize_array(img_tensor)
+
+        decoded_tensor = autoencoder.decode(denormalised)
         
         
         autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
-
-
-# # TESTING
-# class SmallSpectrogramDataset(SpectrogramDataset):
-#     def __init__(self, image_dir, transform, limit=100):
-#         super().__init__(image_dir=image_dir, transform=transform)
-#         self.limit = limit
-
-#     def __len__(self):
-#         return min(super().__len__(), self.limit)
-    
-# dataset = SmallSpectrogramDataset(image_dir=image_dir, transform=transform, limit=100)
-# train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_batch_size, shuffle=True)
-# # END
 
 
 def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_scheduler):
@@ -220,6 +206,17 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
+
+            # DENOISING VIS TEST
+            # test_out = noise_scheduler.step(noise_pred.cpu(), timesteps.cpu(), noisy_images.cpu()).pred_original_sample
+            # test_out = denormaliser.denormalize_array(test_out).to(device)
+            # noised = denormaliser.denormalize_array(noisy_images[0])
+            # noised = noised.unsqueeze(0)
+            # if global_step % 500 == 0:
+            #     noised = autoencoder.decode(noised)
+            #     decoded_tensor = autoencoder.decode(test_out)
+            #     autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_denoised_{global_step}.png")
+            #     autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_noisy_{global_step}.png")
 
             progress_bar.update(1)
             logs = {"loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0], "step": global_step}
