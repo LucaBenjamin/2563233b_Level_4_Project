@@ -38,7 +38,6 @@ class ArrayNormalizer:
 # directory = "Audio_Processing//latents"
 # normalizer = ArrayNormalizer(directory)
 # normalizer.process_and_save()
-# print(f"Global Min: {normalizer.global_min}, Global Max: {normalizer.global_max}")
 
 
 # # Example of denormalizing the first array (if it exists)

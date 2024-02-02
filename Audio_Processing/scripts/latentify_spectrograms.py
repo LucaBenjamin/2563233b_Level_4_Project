@@ -22,7 +22,7 @@ def convert_images_to_latent_and_save(input_directory, output_directory, image_s
             latent_dist = autoencoder.encode(file_path, image_size)
   
             # Convert latent distribution to numpy array
-            latent_array = latent_dist.sample().numpy()
+            latent_array = latent_dist.sample().numpy() * 0.187
             print(latent_array.shape)
             # Save the latent representation as a numpy file
             np.save(output_file, latent_array)

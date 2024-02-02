@@ -19,7 +19,6 @@ from tqdm.auto import tqdm
 from pathlib import Path 
 import glob
 
-from normalise_latents import ArrayNormalizer
 from HFAutoencoder import ImageAutoencoder
 from modified_pipeline import TestPipeline
 
@@ -27,7 +26,7 @@ from modified_pipeline import TestPipeline
 @dataclass
 class TrainingConfig:
     image_size = 64  # the generated image resolution
-    train_batch_size = 1
+    train_batch_size = 32
     eval_batch_size = 8  # how many images to sample during evaluation
     num_epochs = 100000
     gradient_accumulation_steps = 1
@@ -61,8 +60,8 @@ train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_
 # instantiate autoencoder
 autoencoder = ImageAutoencoder()
 
-# instantiate denormaliser
-denormaliser = ArrayNormalizer("")
+renormalisation_factor = (1 / 0.187)
+
 # UNET MODEL
 model = UNet2DModel(
     sample_size=config.image_size,  # the target image resolution
@@ -99,7 +98,7 @@ print("Input shape:", sample_image.shape)
 print("Output shape:", model(sample_image, timestep=0).sample.shape)
 
 
-noise_scheduler = DDPMScheduler(num_train_timesteps=1000)
+noise_scheduler = DDPMScheduler(num_train_timesteps=1000, beta_schedule = 'scaled_linear' )
 noise = torch.randn(sample_image.shape).to(device)
 timesteps = torch.LongTensor([50]).to(device)
 noisy_image = noise_scheduler.add_noise(sample_image, noise, timesteps).to(device)
@@ -133,16 +132,18 @@ def evaluate(config, epoch, pipeline):
  
     for i, img in enumerate(images):
         # Convert PIL image to tensor
+        print(img.max(), img.min())
         print(img.shape)
         img_tensor = img.unsqueeze(0).to(device)
         print("\n\n", img_tensor.shape)
         print("\n\n", img_tensor)
-        denormalised= denormaliser.denormalize_array(img_tensor)
+        print(img_tensor.max(), img_tensor.min())
+        denormalised =img_tensor * renormalisation_factor
 
         decoded_tensor = autoencoder.decode(denormalised)
         
         
-        # autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
+        autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_decoded_{i}.png")
 
 
 def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_scheduler):
@@ -209,14 +210,14 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
 
             # DENOISING VIS TEST
             test_out = noise_scheduler.step(noise_pred.cpu(), timesteps.cpu(), noisy_images.cpu()).pred_original_sample
-            test_out = denormaliser.denormalize_array(test_out).to(device)
-            noised = denormaliser.denormalize_array(noisy_images[0])
+            test_out = (test_out * renormalisation_factor).to(device)
+            noised = (noisy_images[0] * renormalisation_factor).to(device)
             noised = noised.unsqueeze(0)
             if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
                 noised = autoencoder.decode(noised)
                 decoded_tensor = autoencoder.decode(test_out)
-                autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_denoised_{global_step}.png")
-                autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//epoch_{epoch:04d}_noisy_{global_step}.png")
+                autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_denoised_{global_step}.png")
+                autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_noisy_{global_step}.png")
 
             progress_bar.update(1)
             logs = {"loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0], "step": global_step}
