@@ -97,8 +97,6 @@ print("Input shape:", sample_image.shape)
 
 print("Output shape:", model(sample_image, timestep=0).sample.shape)
 
-
-
 noise_scheduler = DDPMScheduler(num_train_timesteps=1000, beta_schedule = 'scaled_linear', clip_sample = False,  thresholding = False)
 
 noise = torch.randn(sample_image.shape).to(device)
@@ -210,10 +208,8 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-            # DENOISING VIS TEST
             test_out = noise_scheduler.step(noise_pred.cpu()[0], timesteps.cpu()[0], noisy_images.cpu()[0]).pred_original_sample
             test_out = (test_out * renormalisation_factor).unsqueeze(0).to(device)
-
             noised = (noisy_images[0] * renormalisation_factor).to(device)
             noised = noised.unsqueeze(0)
             if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
