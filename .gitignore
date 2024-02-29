@@ -8,3 +8,10 @@ IRMAS_tunes
 /Final_Diffusion_Model/test_out
 /Audio_Processing/latents
 /Audio_Processing/latents_old
+/Audio_Processing/PCM_midi_clips
+/Audio_Processing/processed_midi_clips
+/Audio_Processing/midi_spectograms
+/Audio_Processing/midi_latents
+Sample_Outputs
+Sample_Outputs_Short
+Saved_Models

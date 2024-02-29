@@ -12,7 +12,7 @@ print(loaded)
 print(loaded.min(), loaded.max())
 # instantiate denormaliser
 denormaliser = ArrayNormalizer("")
-loaded = denormaliser.denormalize_array(loaded)
+loaded = loaded * (1 / 0.182)
 decoded = autoencoder.decode(torch.from_numpy(loaded))
 print(decoded)
 print(decoded.min(), decoded.max())

@@ -75,10 +75,10 @@ def process_wav(filename, save_dir, target_rate = 16000):
     segments = split_audio(frames, target_rate)
     save_segments(segments, target_rate, prefix = f"{save_dir}_segment")
 
-youtube_files_dir = "Audio_Processing/yt_playlist_downloaded"
+youtube_files_dir = "Audio_Processing//PCM_midi_clips"
 
 for filename in os.listdir(youtube_files_dir):
     file_path = os.path.join(youtube_files_dir, filename)
     if os.path.isfile(file_path):
-        process_wav(file_path, "Audio_Processing/youtube_tunes/processed_clips/" + os.path.basename(file_path))
+        process_wav(file_path, "Audio_Processing//processed_midi_clips//" + os.path.basename(file_path))
 

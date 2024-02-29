@@ -6,7 +6,6 @@ import torchvision.transforms.functional as TF
 import torch
 from diffusers import UNet2DModel
 from PIL import Image
-from diffusers import DDPMScheduler
 import torch.nn.functional as F
 from diffusers.optimization import get_cosine_schedule_with_warmup
 from diffusers import DDPMPipeline
@@ -21,7 +20,7 @@ import glob
 
 from HFAutoencoder import ImageAutoencoder
 from modified_pipeline import TestPipeline
-
+from modified_scheduler import DDPMScheduler
 
 @dataclass
 class TrainingConfig:
@@ -32,8 +31,8 @@ class TrainingConfig:
     gradient_accumulation_steps = 1
     learning_rate = 2e-4
     lr_warmup_steps = 500
-    save_image_epochs = 500
-    save_model_epochs = 50000
+    save_image_epochs = 10
+    save_model_epochs = 20
     seed = 0
     mixed_precision = "fp16"
     output_dir = "Final_Diffusion_Model//test_out"
@@ -43,7 +42,7 @@ config = TrainingConfig()
 
 
 # Specify the directory containing the latent space spectrogram
-image_dir = "Audio_Processing//latents"
+image_dir = "Audio_Processing//midi_latents"
 
 # Define transformations, if needed
 transform = transforms.Compose([
@@ -60,7 +59,8 @@ train_dataloader = torch.utils.data.DataLoader(dataset, batch_size=config.train_
 # instantiate autoencoder
 autoencoder = ImageAutoencoder()
 
-renormalisation_factor = (1 / 0.187)
+renormalisation_factor = (1.0 / 0.18215)
+
 
 # UNET MODEL
 model = UNet2DModel(
@@ -98,7 +98,9 @@ print("Input shape:", sample_image.shape)
 print("Output shape:", model(sample_image, timestep=0).sample.shape)
 
 
-noise_scheduler = DDPMScheduler(num_train_timesteps=1000, beta_schedule = 'scaled_linear' )
+
+noise_scheduler = DDPMScheduler(num_train_timesteps=1000, beta_schedule = 'scaled_linear', clip_sample = False,  thresholding = False)
+
 noise = torch.randn(sample_image.shape).to(device)
 timesteps = torch.LongTensor([50]).to(device)
 noisy_image = noise_scheduler.add_noise(sample_image, noise, timesteps).to(device)
@@ -209,8 +211,9 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                 optimizer.zero_grad()
 
             # DENOISING VIS TEST
-            test_out = noise_scheduler.step(noise_pred.cpu(), timesteps.cpu(), noisy_images.cpu()).pred_original_sample
-            test_out = (test_out * renormalisation_factor).to(device)
+            test_out = noise_scheduler.step(noise_pred.cpu()[0], timesteps.cpu()[0], noisy_images.cpu()[0]).pred_original_sample
+            test_out = (test_out * renormalisation_factor).unsqueeze(0).to(device)
+
             noised = (noisy_images[0] * renormalisation_factor).to(device)
             noised = noised.unsqueeze(0)
             if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
