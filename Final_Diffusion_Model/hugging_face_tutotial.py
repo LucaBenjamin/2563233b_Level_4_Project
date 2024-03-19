@@ -32,7 +32,7 @@ class TrainingConfig:
     learning_rate = 2e-4
     lr_warmup_steps = 500
     save_image_epochs = 10
-    save_model_epochs = 20
+    save_model_epochs = 10
     seed = 0
     mixed_precision = "fp16"
     output_dir = "Final_Diffusion_Model//test_out"
@@ -68,7 +68,8 @@ model = UNet2DModel(
     in_channels=4,  # the number of input channels, 3 for RGB images
     out_channels=4,  # the number of output channels
     layers_per_block=2,  # how many ResNet layers to use per UNet block
-    block_out_channels=(128, 128, 256, 256, 512, 512),  # the number of output channels for each UNet block
+    # block_out_channels=(128, 128, 256, 256, 512, 512),  # the number of output channels for each UNet block
+    block_out_channels=(64, 64, 128, 128, 256, 256),
     down_block_types=(
         "DownBlock2D",  # a regular ResNet downsampling block
         "DownBlock2D",
@@ -176,7 +177,7 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
     for epoch in range(config.num_epochs):
         progress_bar = tqdm(total=len(train_dataloader), disable=not accelerator.is_local_main_process)
         progress_bar.set_description(f"Epoch {epoch}")
-
+        
         for step, batch in enumerate(train_dataloader):
             clean_images = batch
             # Sample noise to add to the images
@@ -208,15 +209,15 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-            test_out = noise_scheduler.step(noise_pred.cpu()[0], timesteps.cpu()[0], noisy_images.cpu()[0]).pred_original_sample
-            test_out = (test_out * renormalisation_factor).unsqueeze(0).to(device)
-            noised = (noisy_images[0] * renormalisation_factor).to(device)
-            noised = noised.unsqueeze(0)
-            if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
-                noised = autoencoder.decode(noised)
-                decoded_tensor = autoencoder.decode(test_out)
-                autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_denoised_{global_step}.png")
-                autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_noisy_{global_step}.png")
+            # test_out = noise_scheduler.step(noise_pred.cpu()[0], timesteps.cpu()[0], noisy_images.cpu()[0]).pred_original_sample
+            # test_out = (test_out * renormalisation_factor).unsqueeze(0).to(device)
+            # noised = (noisy_images[0] * renormalisation_factor).to(device)
+            # noised = noised.unsqueeze(0)
+            # if global_step % 500 == 0 or global_step % 501 == 0 or global_step % 502 == 0 or global_step % 503 == 0 or global_step % 504 == 0:
+            #     noised = autoencoder.decode(noised)
+            #     decoded_tensor = autoencoder.decode(test_out)
+            #     autoencoder.save_image(decoded_tensor, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_denoised_{global_step}.png")
+            #     autoencoder.save_image(noised, f"Final_Diffusion_Model//test_out//samples//denoised//epoch_{epoch:04d}_noisy_{global_step}.png")
 
             progress_bar.update(1)
             logs = {"loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0], "step": global_step}
@@ -240,6 +241,7 @@ def train_loop(config, model, noise_scheduler, optimizer, train_dataloader, lr_s
                         ignore_patterns=["step_*", "epoch_*"],
                     )
                 else:
+                    print("Got here!")
                     pipeline.save_pretrained(config.output_dir)
 
 

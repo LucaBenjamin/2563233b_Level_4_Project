@@ -1,7 +1,7 @@
 import os
 import torch
 import numpy as np
-from HFAutoencoder import ImageAutoencoder  # Assuming the class is saved in image_autoencoder.py
+from HFAutoencoder import ImageAutoencoder
 
 def convert_images_to_latent_and_save(input_directory, output_directory, image_size=512):
     # Initialize the ImageAutoencoder
@@ -29,7 +29,6 @@ def convert_images_to_latent_and_save(input_directory, output_directory, image_s
             # Save the latent representation as a numpy file
             np.save(output_file, latent_array)
 
-# Example usage
 input_dir = 'Audio_Processing//midi_spectograms'
 output_dir = 'Audio_Processing//midi_latents'
 convert_images_to_latent_and_save(input_dir, output_dir)

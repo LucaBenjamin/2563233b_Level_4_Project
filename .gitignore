@@ -10,8 +10,11 @@ IRMAS_tunes
 /Audio_Processing/latents_old
 /Audio_Processing/PCM_midi_clips
 /Audio_Processing/processed_midi_clips
-/Audio_Processing/midi_spectograms
+/Audio_Processing/midi_spectrograms
 /Audio_Processing/midi_latents
+/Audio_Processing/eval_spectrograms_256
+/Audio_Processing/eval_audio_256
+/Audio_Processing/eval_audio_512
 Sample_Outputs
 Sample_Outputs_Short
 Saved_Models

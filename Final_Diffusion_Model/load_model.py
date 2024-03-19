@@ -33,7 +33,8 @@ class CustomModelLoader:
             in_channels=4,  # Adjust if necessary
             out_channels=4,
             layers_per_block=2,
-            block_out_channels=(128, 128, 256, 256, 512, 512),
+            # block_out_channels=(128, 128, 256, 256, 512, 512),
+            block_out_channels=(64, 64, 128, 128, 256, 256),
             down_block_types=(
                 "DownBlock2D",
                 "DownBlock2D",
@@ -75,9 +76,9 @@ if __name__ == "__main__":
     autoencoder = ImageAutoencoder()
 
     # Paths to model configuration, weights, and scheduler configuration
-    config_path = 'Saved_Models//10-02-2024//unet//config.json'  # Update with actual path
-    model_weights_path = 'Saved_Models//10-02-2024//unet//diffusion_pytorch_model.safetensors'  # Update with actual path
-    scheduler_config_path = 'Final_Diffusion_Model//test_out//scheduler//scheduler_config.json'  # Update with actual path
+    config_path = 'Saved_Models///half_width_midi//config.json' 
+    model_weights_path = 'Saved_Models//half_width_midi//diffusion_pytorch_model.safetensors'
+    scheduler_config_path = 'Final_Diffusion_Model//test_out//scheduler//scheduler_config.json' 
 
     loader = CustomModelLoader(config_path, model_weights_path, scheduler_config_path)
     

@@ -36,7 +36,6 @@ class ImageAutoencoder:
         return encoded.latent_dist
 
     def decode(self, latent_dist):
-
         # Decode from latent space to pixel space
         with torch.no_grad():
             decoded = self.model.tiled_decode(latent_dist, return_dict=True)
@@ -52,3 +51,11 @@ class ImageAutoencoder:
 
         # Save the image
         image.save(file_path)
+
+encoder = ImageAutoencoder()
+path = "VAE_Test_Before.png"
+out_path = "VAE_Test_After.png"
+encoded = encoder.encode(path)
+print(encoded.sample().numpy().shape)
+decoded = encoder.decode(encoded.sample())
+encoder.save_image(decoded, out_path)

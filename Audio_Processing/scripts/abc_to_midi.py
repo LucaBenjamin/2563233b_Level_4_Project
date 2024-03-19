@@ -1,6 +1,5 @@
 import os
 from music21 import converter
-from midi2audio import FluidSynth
 
 path = "C:/Users/Luca/Desktop/Dissertation/FolkGAN/Initial_GAN_Testing/Basic_Audio_Processing"
 midi_path = f"{path}/tunes"
@@ -10,7 +9,7 @@ with open(f'{path}/musicABC.txt') as abc_music:
         try:
             s = converter.parseData(song.strip(), format='abc')
             
-            # Create the MIDI file
+            # create midi with music21
             midi_file = f'{midi_path}/tune_{i}.mid'
             s.write('midi', fp=midi_file)
             
