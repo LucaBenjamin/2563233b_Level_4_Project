@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
+# In retrospect, this is not AT ALL how diffusion is supposed to work
+# It was supposed to be a 'from first principles' type of thing :(
+
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 train_images = train_images.reshape((60000, 28, 28, 1)).astype("float32") / 255
 test_images = test_images.reshape((10000, 28, 28, 1)).astype("float32") / 255
@@ -31,7 +34,7 @@ def build_denoiser():
     return model
 
 
-# Visualization after each denoiser
+# visualization
 def visualize_denoising(denoiser, noisy_images, num_samples=10):
     predictions = denoiser.predict(noisy_images[:num_samples])
     
@@ -53,7 +56,7 @@ def visualize_denoising(denoiser, noisy_images, num_samples=10):
 
 denoiser = build_denoiser()
 
-# Initialize multiple denoisers
+# make the denoisers
 num_denoisers = 10
 lr_schedule = ExponentialDecay(
     initial_learning_rate=0.001,
@@ -64,10 +67,9 @@ denoisers = [build_denoiser() for _ in range(num_denoisers)]
 for denoiser in denoisers:
      denoiser.compile(optimizer=optimizer, loss="mse")
 
-# Training parameters
+# parameters
 num_epochs = 5
 batch_size = 16
-# For the first denoiser, the input will be full noise
 input_images = np.random.normal(size=train_images.shape)
 noise_scale =  0.35
 
@@ -77,12 +79,10 @@ for denoiser_num, denoiser in enumerate(denoisers):
 
     print(f"\nTraining denoiser {denoiser_num + 1}/{num_denoisers}...\n")
     
-    # Adjust the noise scale based on the denoiser number
-    
-    # Corrupt the images
+    # corrupt the images
     noisy_images = np.clip(input_images + noise_scale * np.random.normal(size=train_images.shape), 0, 1)
 
-    # Create a tf.data.Dataset for batching and shuffling
+    # create dataset to do random shuffling
     train_dataset = tf.data.Dataset.from_tensor_slices((noisy_images, train_images))
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(batch_size)
 
@@ -97,7 +97,6 @@ for denoiser_num, denoiser in enumerate(denoisers):
     
     visualize_denoising(denoiser, noisy_images)
 
-    # After training one denoiser, use its predictions as input for the next
     input_images = denoiser.predict(noisy_images)
 
 print("\nTraining completed.")

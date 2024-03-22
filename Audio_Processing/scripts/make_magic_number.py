@@ -4,6 +4,7 @@ import torchvision
 from torchvision.datasets.utils import download_and_extract_archive
 from torchvision import transforms
 
+# NEVER ACTUALLY USED BUT IN THEORY WE COULD MAKE OUR OWN MAGIC NUMBER
 
 num_workers = 4
 batch_size = 12

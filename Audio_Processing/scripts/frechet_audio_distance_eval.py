@@ -1,7 +1,6 @@
 from frechet_audio_distance import FrechetAudioDistance
 
-# Initialize the Frechet Audio Distance calculator with your chosen model
-# Example with vggish
+# using google VGGish (standard)
 frechet = FrechetAudioDistance(
     model_name="vggish",
     sample_rate=16000,
@@ -10,11 +9,12 @@ frechet = FrechetAudioDistance(
     verbose=True
 )
 
-# Paths to the directories containing the audio files for comparison
-background_set_path = "Audio_Processing//processed_midi_clips"
-eval_set_path = "Audio_Processing//eval_audio_512"
+# paths to the dirs containing the audio files for comparison, backround is the clean validation set
+# eval_set is what you want to comapre it to
+background_set_path = "Evaluation//background_audio"
+eval_set_path = "Evaluation//eval_100_ts_audio"
 
-# Compute the Frechet Audio Distance
+# compute the FAD across the two dists
 fad_score = frechet.score(background_set_path, eval_set_path, dtype="float32")
 
 print(f"FAD Score: {fad_score}")

@@ -14,12 +14,12 @@ import time
 
 train_images = train_images.reshape(train_images.shape[0], 28, 28, 1).astype('float32')
 train_images  = np.array([ x for (x, y) in zip(train_images, train_labels) if y == 5 ])
-train_images = (train_images - 127.5) / 127.5  # Normalize the images to [-1, 1]
+train_images = (train_images - 127.5) / 127.5  # normalise
 
 BUFFER_SIZE = 60000
 BATCH_SIZE = 256
 
-# Batch and shuffle the data
+# batch dat
 train_dataset = tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 
 def make_generator_model():
@@ -29,7 +29,7 @@ def make_generator_model():
     model.add(layers.LeakyReLU())
 
     model.add(layers.Reshape((7, 7, 256)))
-    assert model.output_shape == (None, 7, 7, 256)  # Note: None is the batch size
+    assert model.output_shape == (None, 7, 7, 256) 
 
     model.add(layers.Conv2DTranspose(128, (5, 5), strides=(1, 1), padding='same', use_bias=False))
     assert model.output_shape == (None, 7, 7, 128)
@@ -67,7 +67,7 @@ def make_discriminator_model():
 discriminator = make_discriminator_model()
 
 
-# This method returns a helper function to compute cross entropy loss
+# loss function
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
 
 def discriminator_loss(real_output, fake_output):
@@ -86,8 +86,6 @@ EPOCHS = 250
 noise_dim = 100
 num_examples_to_generate = 16
 
-# You will reuse this seed overtime (so it's easier)
-# to visualize progress in the animated GIF)
 seed = tf.random.normal([num_examples_to_generate, noise_dim])
 
 def train_step(images):
@@ -117,21 +115,19 @@ def train(dataset, epochs):
       train_step(image_batch)
 
     if(epoch % 25 == 0):
-        # Produce images for the GIF as you go
+        
         generate_and_save_images(generator,
                                 epoch + 1,
                                 seed)
 
         print ('Time for epoch {} is {} sec'.format(epoch + 1, time.time()-start))
 
-  # Generate after the final epoch
+  # final generation
   generate_and_save_images(generator,
                            epochs,
                            seed)
   
 def generate_and_save_images(model, epoch, test_input):
-  # Notice `training` is set to False.
-  # This is so all layers run in inference mode (batchnorm).
   predictions = model(test_input, training=False)
 
   fig = plt.figure(figsize=(4, 4))

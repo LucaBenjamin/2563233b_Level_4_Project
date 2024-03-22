@@ -13,13 +13,13 @@ class NumpyDataset(Dataset):
 
     def __getitem__(self, idx):
         npy_path = os.path.join(self.npy_dir, self.npy_files[idx])
-        # Load the numpy array
+        # load .npy files
         npy_data = np.load(npy_path)
 
-        # Ensure that the numpy array is in the shape (4, 64, 64)
+        # ensure correct shape
         npy_data = np.reshape(npy_data, (4, 64, 64))
 
-        # Convert numpy array to torch tensor
-        tensor_data = torch.from_numpy(npy_data).float()  # Convert to float tensor
+        # convert to torch tensor
+        tensor_data = torch.from_numpy(npy_data).float()
 
         return tensor_data

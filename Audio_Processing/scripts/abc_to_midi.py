@@ -1,7 +1,7 @@
 import os
 from music21 import converter
 
-path = "C:/Users/Luca/Desktop/Dissertation/FolkGAN/Initial_GAN_Testing/Basic_Audio_Processing"
+path = "Initial_GAN_Testing/Basic_Audio_Processing"
 midi_path = f"{path}/tunes"
 
 with open(f'{path}/musicABC.txt') as abc_music:

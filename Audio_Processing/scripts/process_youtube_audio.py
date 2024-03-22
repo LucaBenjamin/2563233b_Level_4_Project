@@ -1,13 +1,13 @@
 import wave
 import numpy as np
 import os
-
+# Used to process downloaded youtube audio, should be a class really :)
 def make_mono(filename):
     with wave.open(filename, 'rb') as source_wav:
         source_channels = source_wav.getnchannels()
         frames = np.frombuffer(source_wav.readframes(source_wav.getnframes()), dtype=np.int16)
 
-        # Convert to mono if not already
+        # convert to mono
         if source_channels > 1:
             frames = frames.reshape(-1, source_channels)
             frames = frames.mean(axis=1).astype(np.int16)
@@ -19,27 +19,10 @@ def resample(frames, original_rate, target_rate):
     if original_rate == target_rate:
         return frames
 
-    # Calculate new length of data after resampling
+    # calc length
     new_length = int(len(frames) * target_rate / original_rate)
     
-    # Resample using linear interpolation
-    resampled_frames = np.interp(
-        np.linspace(0, len(frames), new_length, endpoint=False),
-        np.arange(len(frames)),
-        frames
-    ).astype(np.int16)
-    
-    return resampled_frames
-
-
-def resample(frames, original_rate, target_rate):
-    if original_rate == target_rate:
-        return frames
-
-    # Calculate new length of data after resampling
-    new_length = int(len(frames) * target_rate / original_rate)
-    
-    # Resample using linear interpolation
+    # resample
     resampled_frames = np.interp(
         np.linspace(0, len(frames), new_length, endpoint=False),
         np.arange(len(frames)),
@@ -65,7 +48,7 @@ def save_segments(segments, framerate, prefix="segment"):
     for i, segment in enumerate(segments):
         with wave.open(f"{prefix}_{i}.wav", 'wb') as segment_wav:
             segment_wav.setnchannels(1)
-            segment_wav.setsampwidth(2)  # Assuming 16-bit audio
+            segment_wav.setsampwidth(2)
             segment_wav.setframerate(framerate)
             segment_wav.writeframes(segment.tobytes())
 
