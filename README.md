@@ -28,7 +28,7 @@ Contains Python scripts for manipulating the audio data in various ways.
 - `[modified pipelines]`: Edits to some existing pipelines to make them work with latents.
 
 ### `GAN_Testing` and `Initial_Diffusion_Testing`
-Some initial naive testing with both types of models, not important for the final implementation.
+Some initial naive testing with both types of model, not important for the final implementation.
 
 ### `Small_Sample_Outputs`
 A small random selection of sample outputs from both final baseline models.

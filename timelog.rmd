@@ -1,0 +1,253 @@
+# Timelog
+
+* Investigating Generative AI Techniques For Synthesising Music
+* Luca Benjamin
+* 2563233b
+* Paul Henderson
+
+## Guidance
+
+* This file contains the time log for your project. It will be submitted along with your final dissertation.
+* **YOU MUST KEEP THIS UP TO DATE AND UNDER VERSION CONTROL.**
+* This timelog should be filled out honestly, regularly (daily) and accurately. It is for *your* benefit.
+* Follow the structure provided, grouping time by weeks.  Quantise time to the half hour.
+
+## Week 1
+
+### 19 Oct 2023
+* *1 hour* Read over project documnetation and Moodle page
+
+## 28 Oct 2023
+* *2 hours* reading over project proposals and choosing bids
+
+## 20 Sept 2023
+* *1.5 hours* prepared for first meeting
+
+## 21 Sept 2023
+* *1 hour* supervisor meeting
+* *1 hour* going over background research given
+
+## 25 Sept 2023
+* *2 hours* finsished background reading
+
+## 25 Sept 2023
+* *2 hours* finsished background reading
+
+## 28 Sept 2023
+* *1 hour* supervisor meeting
+* *0.5 hours* looked over further reading
+
+## 1 Oct 2023
+* *1 hour* more reading around generative AI
+
+## 3 Oct 2023
+* *2 hours* finished research and reading
+
+## 8 Oct 2023
+* *1 hour* supervisor meeting
+* *2 hours* reading about cycle diffusion and looking at Hugging Face for the first time
+
+## 12 Oct 2023
+* *1 hour* trying out importing Hugging Face libraries for the first time
+
+## 13 Oct 2023
+* *2 hours* went over some old TensorFlow work to refresh memory
+
+## 16 Oct 2023
+* *1 hour* supervisor meeting
+* *1 hour* looked into PyTorch for the first time
+
+## 20 Oct 2023
+* *1 hour* looking into audio processing
+* *1 hour* looked into stable diffusion and how to extract its VAE
+
+## 23 Oct 2023
+* *3 hours* worked on a GAN example from reading in Python
+
+## 24 Oct 2023
+* *1 hour* supervisor meeting
+
+## 25 Oct 2023
+* *3.5 hours* looked everywhere(!) for Folk music audio data, none found that is big enough
+
+## 1 Nov 2023
+* *2 hours* investigated alternative audio
+
+## 2 Nov 2023
+* *1 hour* supervisor meeting
+
+## 3 Nov 2023
+* *1.5 hours* began work on diffusion example implementation
+
+## 5 Nov 2023
+* *2 hours* continued work on diffusion example implementation
+* *0.5 hours* looked for more data
+
+## 7 Nov 2023
+* *1 hour* supervisor meeting
+
+## 8 Nov 2023
+* *1.5 hours* finsihed example diffusion model (not perfect)
+* *2.5 hours* finsihed final scripts to download and process youtube audio
+
+## 11 Nov 2023
+* *1.5 hours* located appropriate abc data and wrote script to transform to MIDI
+* *2 hours* tried a million different ways to synth midi to wav in Python, eventally did it with a Windows program
+
+## 11 Nov 2023
+* *3.5 hours* trying to get Hugging Face example diffusion model to work on local machine
+
+## 17 Nov 2023
+* *3 hours* getting initial spectrogram processing working (can't get them to be square)
+
+## 20 Nov 2023
+* *1 hour* supervisor meeting
+
+## 22 Nov 2023
+* *2 hours* more work on spectrograms
+
+## 23 Nov 2023
+* *2.5 hours* began trying to get model to train in pixel space on initial spectrograms
+
+## 24 Nov 2023
+* *2 hours* getting Stable Diffusion VAE to work independantly on an image for the first time
+
+## 28 Nov 2023
+* *1 hour* supervisor meeting
+
+## 30 Nov 2023
+* *3.5 hours* final push to get spectrogram pipeline perfect, finally done!
+
+## 1 Dec 2023
+* *2 hours* finalised audio pipeline by adding VAE
+
+## 4 Dec 2023
+* *1 hour* made script to verify full pipeline worked, it didn't
+* *2 hours* tried to fix pipeline issues
+
+## 5 Dec 2023
+* *1 hour* finally solved audio pipeline issues
+
+## 6 Dec 2023
+* *1 hour* supervisor meeting
+
+## 8 Dec 2023
+* *4 hours* much more work done on final model, finally using latent space but outputs are broken
+
+## 10 Dec 2023
+* *1.5 hours* wrote some code to view denoising steps to help with debugging
+
+## 11 Dec 2023
+* *3.5 hours* all latents computed in advance to save on training time
+
+## 12 Dec 2023
+* *2 hours* wrote script to use saved model weights
+
+## 15 Dec 2023
+* *1.5 hours* debugged model further, tried out some basic normalisation
+
+## 19 Dec 2023
+* *2 hours* discovered issues may be in the pipeline/scheduler, read a lot of documentaion on how to fix
+
+## 19 Jan 2024
+* *1 hour* supervisor meeting
+
+## 24 Jan 2024
+* *2.5 hours* rewrote scheduler and pipeline for latent data
+
+## 25 Jan 2024
+* *3 hours* re-trained model
+
+## 26 Jan 2024
+* *1 hour* supervisor meeting
+* *1 hour* investigating "magic number" and other normalisation
+
+## 28 Jan 2024
+* *2 hours* had to regenerate all latents due to normalisation error in testing
+
+## 29 Jan 2024
+* *1 hour* supervisor meeting
+* *0.5 hours* magic number applied to all latents
+* *2 hours* re-trained model, looking at de-noising to fine tune
+
+## 30 Jan 2024
+* *2 hours* formatted dissertaion template on overleaf
+
+## 31 Jan 2024
+* *2.5 hours* did some writing in the background section
+
+## 2 Feb 2024
+* *1.5 hours* more writing
+
+## 5 Feb 2024
+* *1 hour* final baseline MIDI audio model set to train for 12 hours
+
+## 7 Feb 2024
+* *1 hour* final baseline human audio model set to train for 12 hours
+
+## 10 Feb 2024
+* *2 hours* made script to convert model outputs back to sample audio to test how they sound
+* *1 hour* tweaked script and pipeline for better audio
+
+## 12 Feb 2024
+* *1 hour* supervisor meeting
+
+## 13 Feb 2024
+* *2 hours* evaluation started, FID and FAD invenstigated
+
+## 15 Feb 2024
+* *2 hours* whole git was completely broken by me, had to completely manually reformat
+* *2 hours* recovering lost files and sorting out conflicts
+
+## 18 Feb 2024
+* *4 hours* around 1/3 of evaluation done, various diffent things
+
+## 21 Feb 2024
+* *1.5 hours* some more dissertation writing
+
+## 25 Feb 2024
+* *1 hour* learning LaTeX
+* *1 hour* more dissertation writing
+
+## 28 Feb 2024
+* *1.5 hour* learning more LaTeX and writing
+* *2 hours* more evaluation work
+
+## 29 Feb 2024
+* *1 hour* supervisor meeting
+
+## 30 Feb 2024
+* *3 hours* eval work done on generation side
+
+## 1 Mar 2024
+* *1 hour* suitable FAD implementation found
+* *2 hours* computing all FADs for evaluation report
+
+## 3 Mar 2024
+* *2.5 hours* final evaliation computational work done (I think)
+
+## 9 Mar 2024
+* *3 hours* studying hall of fame projects and more writing/planning
+
+## 12 Mar 2024
+* *1 hour* supervisor meeting
+
+## 15 Mar 2024
+* *2 hours* dissertation planning
+
+## 18 Mar 2024
+* *all day* my birthday!!! (this entry was not actualy done on my birthday thankfully)
+
+## 19 Mar 2024
+* *7 hours* dissertation writing
+
+## 20 Mar 2024
+* *8 hours* more dissertation writing
+
+## 21 Mar 2024
+* *8 hours* even more dissertation writing
+* *2 hours* making evaluation graphs
+
+## 22 Mar 2024
+* *5 hours* finishing touches to dissertation and organising project structue
+* DONE!!!
