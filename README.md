@@ -32,3 +32,23 @@ Some initial naive testing with both types of models, not important for the fina
 
 ### `Small_Sample_Outputs`
 A small random selection of sample outputs from both final baseline models.
+
+
+## Pipeline guide
+This section will explain how to use the scripts as a pipeline to process the data and train the model.
+
+### Before You Start
+1. Download CUDA and make sure it works with PyTorch
+2. (Not Essential) create a new python environment to work in.
+3. `pip install` any packages needed.
+4. Some directories, e.g. where the spectrogram images are stored, have hard coded locations within the scripts (relative to project root folder). Make sure you name your dirs the same or change the scripts.
+
+### Audio Processing
+1. Download audio with `download_youtube_playlist.py`, or download midi files and convert to WAVs manually.
+2. Process the audio with `process_youtube_audio.py`.
+3. Convert the clips into Mel-Spectrograms using `make_spectrograms.py`.
+4. Convert spectrograms into latent space using `latentify_spectrograms.py`
+
+### Model Training
+1. Make sure `dataset_class.py` points to your latent .npy files.
+2. Run `final_diffusion_model.py`! Samples will be generated in a directory named  `test_out`.
